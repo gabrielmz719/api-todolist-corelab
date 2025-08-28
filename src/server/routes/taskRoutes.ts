@@ -1,13 +1,19 @@
 import { Router } from 'express';
-import { listTasks, getTask, createTask, updateTask, deleteTask, toggleFavorite } from '../controllers/taskController';
+import { body } from 'express-validator';
+import { createTask, listTasks } from '../controllers/taskController';
 
 const router = Router();
 
-router.get('/', listTasks);
-router.get('/:id', getTask);
-router.post('/', createTask);
-router.patch('/:id', updateTask);
-router.delete('/:id', deleteTask);
-router.patch('/:id/favorite', toggleFavorite);
+router.get('/tasks', listTasks);
 
-export default router;
+router.post(
+    '/tasks',
+    body('title').isString().notEmpty().withMessage('Título é obrigatório'),
+    body('description').optional().isString(),
+    body('completed').optional().isBoolean(),
+    body('favorite').optional().isBoolean(),
+    body('color').optional().isString(),
+    createTask
+);
+
+export { router };
